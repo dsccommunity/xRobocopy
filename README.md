@@ -73,20 +73,9 @@ We reserve resource and module names without prefixes ("x" or "c") for future us
 Versions
 --------
 
-**0.1.0.0**
-
-- Initial release with the following resources    - Source
-    - Destination
-    - Files
-    - Retry
-    - Wait
-    - SubdirectoriesIncludingEmpty
-    - Restartable
-    - MultiThreaded
-    - ExcludeFiles
-    - LogOutput
-    - AppendLog
-    - AdditionalArgs
+### 1.0.0.0
+* Initial public release of xRobocopy module with following resources:
+	* xRobocopy
 
 Examples
 --------
