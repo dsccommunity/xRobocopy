@@ -16,12 +16,13 @@ function Get-TargetResource
         $LogOutput
     )
 
-    $LogOutputExists = Test-Path $PSBoundParameters.LogOutput
 
     $returnValue = @{
-        Source = if (test-path $Source){[System.String]$(ls $Source).psChildName};
-        Destination = if (test-path $Destination){[System.String]$(ls $Destination).psChildName};
-        LogOutput = if ($LogOutputExists -eq $true){[System.String]$PSBoundParameters.LogOutput}
+        Source = if (Test-Path $Source){$Source};
+        Destination = if (Test-Path $Destination){$Destination};
+        LogOutput = if ($LogOutput){
+                        if(Test-Path $LogOutput){$LogOutput}
+                        }
     }
 
     $returnValue
@@ -72,19 +73,19 @@ function Set-TargetResource
     )
 
     [string]$Arguments = ''
-    if ($Retry -ne '') {$Arguments += " /R:$PSBoundParameters:Retry"}
-    if ($Wait -ne '') {$Arguments += " /W:$PSBoundParameters:Wait"}
+    if ($Retry -ne '') {$Arguments += " /R:$Retry"}
+    if ($Wait -ne '') {$Arguments += " /W:$Wait"}
     if ($SubdirectoriesIncludingEmpty -ne '') {$Arguments += ' /E'}
     if ($Restartable -ne '') {$Arguments += ' /MT'}
-    if ($ExcludeFiles -ne '') {$Arguments += " /XF $PSBoundParameters:ExludeFiles"}
-    if ($ExcludeDirs -ne '') {$Arguments += " /XD $PSBoundParameters:ExcludeDirs"}
+    if ($ExcludeFiles -ne '') {$Arguments += " /XF $ExludeFiles"}
+    if ($ExcludeDirs -ne '') {$Arguments += " /XD $ExcludeDirs"}
     if ($LogOutput -ne '' -AND $AppendLog -eq $true) {
-        $Arguments += " /LOG+:$PSBoundParameters:LogOutput"
+        $Arguments += " /LOG+:$LogOutput"
         }
     if ($LogOutput -ne '' -AND $AppendLog -eq $false) {
-        $Arguments += " /LOG:$PSBoundParameters:LogOutput"
+        $Arguments += " /LOG:$LogOutput"
      }
-    if ($AdditionalArgs -ne $null) {$Arguments += " $PSBoundParameters:AdditionalArgs"}
+    if ($AdditionalArgs -ne $null) {$Arguments += " $AdditionalArgs"}
 
     try {
         Write-Verbose "Executing Robocopy with arguements: $arguements"
