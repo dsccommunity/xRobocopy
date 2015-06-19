@@ -1,4 +1,8 @@
-﻿The **xRobocopy** module is a part of the Windows PowerShell Desired State Configuration (DSC) Resource Kit, which is a collection of DSC Resources. This module is used to facilitate large file copies with complex requirements such as multithreading, restarts, and exclusions when recursing content., with simple declarative language.
+[![Build status](https://ci.appveyor.com/api/projects/status/gooo7e8b374v45j6/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/xrobocopy/branch/master)  
+
+# xRobocopy 
+
+The **xRobocopy** module is a part of the Windows PowerShell Desired State Configuration (DSC) Resource Kit, which is a collection of DSC Resources. This module is used to facilitate large file copies with complex requirements such as multithreading, restarts, and exclusions when recursing content., with simple declarative language.
 
 **All of the resources in the DSC Resource Kit are provided AS IS, and are not supported through any Microsoft standard support program or service. The "x" in xRobocopy stands for experimental**, which means that these resources will be **fix forward** and monitored by the module owner(s).
 
@@ -69,20 +73,9 @@ We reserve resource and module names without prefixes ("x" or "c") for future us
 Versions
 --------
 
-**0.1.0.0**
-
-- Initial release with the following resources    - Source
-    - Destination
-    - Files
-    - Retry
-    - Wait
-    - SubdirectoriesIncludingEmpty
-    - Restartable
-    - MultiThreaded
-    - ExcludeFiles
-    - LogOutput
-    - AppendLog
-    - AdditionalArgs
+### 1.0.0.0
+* Initial public release of xRobocopy module with following resources:
+	* xRobocopy
 
 Examples
 --------
