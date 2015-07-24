@@ -73,7 +73,12 @@ We reserve resource and module names without prefixes ("x" or "c") for future us
 Versions
 --------
 
+### 1.1.0.0
+
+* Updated Get-TargetResource function
+
 ### 1.0.0.0
+
 * Initial public release of xRobocopy module with following resources:
 	* xRobocopy
 
