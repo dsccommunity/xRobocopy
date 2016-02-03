@@ -74,6 +74,8 @@ We reserve resource and module names without prefixes ("x" or "c") for future us
 
 ### Unreleased
 
+### 1.2.0.0
+
 ### 1.1.0.0
 
 * Updated Get-TargetResource function
