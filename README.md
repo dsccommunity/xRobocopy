@@ -70,8 +70,13 @@ choice
 
 We reserve resource and module names without prefixes ("x" or "c") for future use (e.g. "MSFT_Resource"). If the next version of Windows Server ships with a "WindowsEventForwarding" resource, we don't want to break any configurations that use any community modifications. Please keep a prefix such as "c" on all community modifications.
 
-Versions
---------
+## Versions
+
+### Unreleased
+
+### 1.2.0.0
+
+* Improvements in error handling
 
 ### 1.1.0.0
 
