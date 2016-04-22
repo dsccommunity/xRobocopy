@@ -85,7 +85,7 @@ We reserve resource and module names without prefixes ("x" or "c") for future us
 ### 1.0.0.0
 
 * Initial public release of xRobocopy module with following resources:
-	* xRobocopy
+    * xRobocopy
 
 Examples
 --------
@@ -109,7 +109,7 @@ Examples
                 Destination           = 'C:\inetpub\wwwroot\sitename'
                 Multithread           = $true
                 Restartable           = $true
-                PSRunAsCredential     = $Credential
+                PsDscRunAsCredential  = $Credential
             }
         }
     }
