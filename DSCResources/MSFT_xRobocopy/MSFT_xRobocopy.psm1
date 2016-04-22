@@ -12,31 +12,9 @@ function Get-TargetResource
         [System.String]
         $Destination,
 
-        [System.String]
-        $LogOutput
-    )
-
-    $returnValue = @{
-        Source = if (Test-Path $Source){$Source};
-        Destination = if (Test-Path $Destination){$Destination};
-        LogOutput = if ($LogOutput){if(Test-Path $LogOutput){$LogOutput}}
-    }
-
-    return $returnValue
-}
-
-function Set-TargetResource
-{
-    [CmdletBinding()]
-    param
-    (
-        [parameter(Mandatory = $true)]
-        [System.String]
-        $Source,
-
-        [parameter(Mandatory = $true)]
-        [System.String]
-        $Destination,
+        [ValidateSet('Present', 'Absent')]
+        [string]
+        $Ensure = 'Present',
 
         [System.String]
         $Files,
@@ -69,10 +47,87 @@ function Set-TargetResource
         $AdditionalArgs
     )
 
-    [System.String[]]$arguments = Get-RobocopyArguments
+    [System.Boolean]$result = Test-TargetResource $Source $Destination $Ensure $Files $Retry $Wait $SubdirectoriesIncludingEmpty $Restartable $MultiThreaded $ExcludeFiles $LogOutput $AppendLog $AdditionalArgs
+    if($result)
+    {
+        $ensure = 'Present'
+    }
+    else
+    {
+        $ensure = 'Absent'
+    }
+
+    $returnValue = @{
+        Source = $Source
+        Destination = $Destination
+        Ensure = $ensure
+        Files = $Files
+        Retry = $Retry
+        Wait = $Wait
+        SubdirectoriesIncludingEmpty = $SubdirectoriesIncludingEmpty
+        Restartable = $Restartable
+        MultiThreaded = $MultiThreaded
+        ExcludeFiles = $ExcludeFiles
+        LogOutput = $LogOutput
+        AppendLog = $AppendLog
+        AdditionalArgs = $AdditionalArgs
+    }
+
+    return $returnValue
+}
+
+function Set-TargetResource
+{
+    [CmdletBinding()]
+    param
+    (
+        [parameter(Mandatory = $true)]
+        [System.String]
+        $Source,
+
+        [parameter(Mandatory = $true)]
+        [System.String]
+        $Destination,
+
+        [ValidateSet('Present', 'Absent')]
+        [string]
+        $Ensure = 'Present',
+
+        [System.String]
+        $Files,
+
+        [System.UInt32]
+        $Retry,
+
+        [System.UInt32]
+        $Wait,
+
+        [System.Boolean]
+        $SubdirectoriesIncludingEmpty = $False,
+
+        [System.Boolean]
+        $Restartable = $False,
+
+        [System.Boolean]
+        $MultiThreaded = $False,
+
+        [System.String]
+        $ExcludeFiles,
+
+        [System.String]
+        $LogOutput,
+
+        [System.Boolean]
+        $AppendLog = $False,
+
+        [System.String[]]
+        $AdditionalArgs
+    )
+
+    [System.String[]]$arguments = Get-RobocopyArguments $Source $Destination $Files $Retry $Wait $SubdirectoriesIncludingEmpty $Restartable $MultiThreaded $ExcludeFiles $LogOutput $AppendLog $AdditionalArgs
 
     Write-Verbose "Executing robocopy.exe with: $arguments"
-    &robocopy $arguments
+    &robocopy $arguments | Out-Null
     if($LASTEXITCODE -ge 8)
     {
         throw "robocopy returned with errors! Exit code: $LASTEXITCODE! More info here:https://support.microsoft.com/en-us/kb/954404"
@@ -93,6 +148,10 @@ function Test-TargetResource
         [System.String]
         $Destination,
 
+        [ValidateSet('Present', 'Absent')]
+        [string]
+        $Ensure = 'Present',
+
         [System.String]
         $Files,
 
@@ -103,13 +162,13 @@ function Test-TargetResource
         $Wait,
 
         [System.Boolean]
-        $SubdirectoriesIncludingEmpty,
+        $SubdirectoriesIncludingEmpty = $False,
 
         [System.Boolean]
-        $Restartable,
+        $Restartable = $False,
 
         [System.Boolean]
-        $MultiThreaded,
+        $MultiThreaded = $False,
 
         [System.String]
         $ExcludeFiles,
@@ -118,20 +177,20 @@ function Test-TargetResource
         $LogOutput,
 
         [System.Boolean]
-        $AppendLog,
+        $AppendLog = $False,
 
         [System.String[]]
         $AdditionalArgs
     )
 
-    [System.String[]]$arguments = Get-RobocopyArguments
+    [System.String[]]$arguments = Get-RobocopyArguments $Source $Destination $Files $Retry $Wait $SubdirectoriesIncludingEmpty $Restartable $MultiThreaded $ExcludeFiles $LogOutput $AppendLog $AdditionalArgs
 
     if(!$arguments.Contains('/L') -and !$arguments.Contains('/l'))
     {
         $arguments += '/L'
     }
     
-    &robocopy $arguments
+    &robocopy $arguments | Out-Null
     $result = $LASTEXITCODE
 
     # https://support.microsoft.com/en-us/kb/954404
