@@ -130,12 +130,7 @@ function Test-TargetResource
 
     [string]$arguments = Get-RobocopyArguments $Retry $Wait $SubdirectoriesIncludingEmpty $Restartable $MultiThreaded $ExcludeFiles $LogOutput $AppendLog $AdditionalArgs
 
-    try {
-        $result = Invoke-RobocopyTest $Source $Destination $Arguments
-        }
-    catch {
-        Write-Warning "An error occured while getting the file list from Robocopy.exe.  ERROR: $_"
-        }
+    $result = Invoke-RobocopyTest $Source $Destination $Arguments
     
     # https://support.microsoft.com/en-us/kb/954404
     # ROBOCOPY $LASTEXITCODE is a bitflag:
@@ -145,8 +140,20 @@ function Test-TargetResource
     #  4: mismatched files/directories
     #  8: copy errors and retries exceeded
     # 16: serious error
-    if ($result -ge 0 -and $result -lt 8) {[system.boolean]$result = $true}
-    else {[system.boolean]$result = $false}
+    if ($result -ge 1 -and $result -lt 8) 
+    {
+        Write-Verbose "Source and destination are out of sync"
+        [system.boolean]$result = $false
+    }
+    elseif ($result -eq 0)
+    {
+        Write-Verbose "Source and destination are completely synchronized"
+        [system.boolean]$result = $true
+    }
+    else
+    {
+        throw "robocopy test returned with errors, exit code: $result!"
+    }
     
     $result
 }
