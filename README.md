@@ -74,6 +74,10 @@ We reserve resource and module names without prefixes ("x" or "c") for future us
 
 ### Unreleased
 
+* Improved Test-TargetResource method to run robocopy with the same parameters as in Set-TargetResource
+* Bug fix in Test-TargetResource when evaluating return code from robocopy
+* Updated example to use correct PsDscRunAsCredential parameter
+
 ### 1.2.0.0
 
 * Improvements in error handling
