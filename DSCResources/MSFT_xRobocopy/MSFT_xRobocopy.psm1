@@ -72,22 +72,8 @@ function Set-TargetResource
         $AdditionalArgs
     )
 
-    [string]$Arguments = ''
-    if ($Retry -ne '') {$Arguments += " /R:$Retry"}
-    if ($Wait -ne '') {$Arguments += " /W:$Wait"}
-    if ($SubdirectoriesIncludingEmpty) {$Arguments += ' /E'}
-    if ($Restartable) {$Arguments += ' /Z'}
-    if ($MultiThreaded) {$Arguments += ' /MT'}
-    if ($ExcludeFiles -ne '') {$Arguments += " /XF $ExcludeFiles"}
-    if ($ExcludeDirs -ne '') {$Arguments += " /XD $ExcludeDirs"}
-    if ($LogOutput -ne '' -AND $AppendLog) {
-        $Arguments += " /LOG+:$LogOutput"
-        }
-    if ($LogOutput -ne '' -AND -not $AppendLog) {
-        $Arguments += " /LOG:$LogOutput"
-     }
-    if ($AdditionalArgs -ne $null) {$Arguments += " $AdditionalArgs"}
-
+    [string]$arguments = Get-RobocopyArguments $Retry $Wait $SubdirectoriesIncludingEmpty $Restartable $MultiThreaded $ExcludeFiles $LogOutput $AppendLog $AdditionalArgs
+    
     try {
         Write-Verbose "Executing: Robocopy.exe `"$($Source)`" `"$($Destination)`" $($Arguments)"
         Invoke-Robocopy $Source $Destination $Arguments
@@ -142,12 +128,9 @@ function Test-TargetResource
         $AdditionalArgs
     )
 
-    try {
-        $result = Invoke-RobocopyTest $Source $Destination
-        }
-    catch {
-        Write-Warning "An error occured while getting the file list from Robocopy.exe.  ERROR: $_"
-        }
+    [string]$arguments = Get-RobocopyArguments $Retry $Wait $SubdirectoriesIncludingEmpty $Restartable $MultiThreaded $ExcludeFiles $LogOutput $AppendLog $AdditionalArgs
+
+    $result = Invoke-RobocopyTest $Source $Destination $Arguments
     
     # https://support.microsoft.com/en-us/kb/954404
     # ROBOCOPY $LASTEXITCODE is a bitflag:
@@ -157,8 +140,20 @@ function Test-TargetResource
     #  4: mismatched files/directories
     #  8: copy errors and retries exceeded
     # 16: serious error
-    if ($result -ge 0 -and $result -lt 8) {[system.boolean]$result = $true}
-    else {[system.boolean]$result = $false}
+    if ($result -ge 1 -and $result -lt 8) 
+    {
+        Write-Verbose "Source and destination are out of sync"
+        [system.boolean]$result = $false
+    }
+    elseif ($result -eq 0)
+    {
+        Write-Verbose "Source and destination are completely synchronized"
+        [system.boolean]$result = $true
+    }
+    else
+    {
+        throw "robocopy test returned with errors, exit code: $result!"
+    }
     
     $result
 }
@@ -166,16 +161,20 @@ function Test-TargetResource
 # Helper Functions
 
 function Invoke-RobocopyTest {
-param (
-    [parameter(Mandatory = $true)]
-    [System.String]
-    $source,
+    param (
+        [parameter(Mandatory = $true)]
+        [System.String]
+        $source,
 
-    [parameter(Mandatory = $true)]
-    [System.String]
-    $destination
-)
-    $output = & robocopy.exe /L $source $destination
+        [parameter(Mandatory = $true)]
+        [System.String]
+        $destination,
+
+        [System.String]
+        $Arguments
+    )
+
+    $output = Invoke-Expression "&robocopy.exe /L `"$Source`" `"$Destination`" $Arguments"
     $LASTEXITCODE
 }
  # Invoke-RobocopyTest C:\DSCTestMOF C:\DSCTestMOF2
@@ -200,5 +199,58 @@ param (
     $LASTEXITCODE
 }
  # Invoke-Robocopy -source C:\DSCTestMOF -destination C:\DSCTestMOF2 -Arguments '/E /MT'
+
+function Get-RobocopyArguments
+{
+    [CmdletBinding()]
+    [OutputType([System.String])]
+    param
+    (
+        [System.UInt32]
+        $Retry,
+
+        [System.UInt32]
+        $Wait,
+
+        [System.Boolean]
+        $SubdirectoriesIncludingEmpty,
+
+        [System.Boolean]
+        $Restartable,
+
+        [System.Boolean]
+        $MultiThreaded,
+
+        [System.String]
+        $ExcludeFiles,
+
+        [System.String]
+        $LogOutput,
+
+        [System.Boolean]
+        $AppendLog,
+
+        [System.String]
+        $AdditionalArgs
+    )
+
+    [System.String]$arguments = ''
+    if ($Retry -ne '') {$Arguments += " /R:$Retry"}
+    if ($Wait -ne '') {$Arguments += " /W:$Wait"}
+    if ($SubdirectoriesIncludingEmpty) {$Arguments += ' /E'}
+    if ($Restartable) {$Arguments += ' /Z'}
+    if ($MultiThreaded) {$Arguments += ' /MT'}
+    if ($ExcludeFiles -ne '') {$Arguments += " /XF $ExcludeFiles"}
+    if ($ExcludeDirs -ne '') {$Arguments += " /XD $ExcludeDirs"}
+    if ($LogOutput -ne '' -AND $AppendLog) {
+        $Arguments += " /LOG+:$LogOutput"
+        }
+    if ($LogOutput -ne '' -AND -not $AppendLog) {
+        $Arguments += " /LOG:$LogOutput"
+     }
+    if ($AdditionalArgs -ne $null) {$Arguments += " $AdditionalArgs"}
+
+    return $arguments
+}
 
 Export-ModuleMember -Function *-TargetResource
