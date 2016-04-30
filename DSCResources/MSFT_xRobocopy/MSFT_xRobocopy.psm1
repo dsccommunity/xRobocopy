@@ -12,10 +12,6 @@ function Get-TargetResource
         [System.String]
         $Destination,
 
-        [ValidateSet('Present', 'Absent')]
-        [string]
-        $Ensure = 'Present',
-
         [System.String]
         $Files,
 
@@ -47,20 +43,16 @@ function Get-TargetResource
         $AdditionalArgs
     )
 
-    [System.Boolean]$result = Test-TargetResource $Source $Destination $Ensure $Files $Retry $Wait $SubdirectoriesIncludingEmpty $Restartable $MultiThreaded $ExcludeFiles $LogOutput $AppendLog $AdditionalArgs
-    if($result)
+    $result = Test-TargetResource $Source $Destination $Files $Retry $Wait $SubdirectoriesIncludingEmpty $Restartable $MultiThreaded $ExcludeFiles $LogOutput $AppendLog $AdditionalArgs
+    $ensure = 'Absent'
+    if($result -eq $true)
     {
         $ensure = 'Present'
-    }
-    else
-    {
-        $ensure = 'Absent'
     }
 
     $returnValue = @{
         Source = $Source
         Destination = $Destination
-        Ensure = $ensure
         Files = $Files
         Retry = $Retry
         Wait = $Wait
@@ -71,6 +63,7 @@ function Get-TargetResource
         LogOutput = $LogOutput
         AppendLog = $AppendLog
         AdditionalArgs = $AdditionalArgs
+        Ensure = $ensure
     }
 
     return $returnValue
@@ -89,10 +82,6 @@ function Set-TargetResource
         [System.String]
         $Destination,
 
-        [ValidateSet('Present', 'Absent')]
-        [string]
-        $Ensure = 'Present',
-
         [System.String]
         $Files,
 
@@ -124,7 +113,7 @@ function Set-TargetResource
         $AdditionalArgs
     )
 
-    [System.String[]]$arguments = Get-RobocopyArguments $Source $Destination $Files $Retry $Wait $SubdirectoriesIncludingEmpty $Restartable $MultiThreaded $ExcludeFiles $LogOutput $AppendLog $AdditionalArgs
+    $arguments = Get-RobocopyArguments $Source $Destination $Files $Retry $Wait $SubdirectoriesIncludingEmpty $Restartable $MultiThreaded $ExcludeFiles $LogOutput $AppendLog $AdditionalArgs
 
     Write-Verbose "Executing robocopy.exe with: $arguments"
     &robocopy $arguments | Out-Null
@@ -148,10 +137,6 @@ function Test-TargetResource
         [System.String]
         $Destination,
 
-        [ValidateSet('Present', 'Absent')]
-        [string]
-        $Ensure = 'Present',
-
         [System.String]
         $Files,
 
@@ -183,7 +168,7 @@ function Test-TargetResource
         $AdditionalArgs
     )
 
-    [System.String[]]$arguments = Get-RobocopyArguments $Source $Destination $Files $Retry $Wait $SubdirectoriesIncludingEmpty $Restartable $MultiThreaded $ExcludeFiles $LogOutput $AppendLog $AdditionalArgs
+    $arguments = Get-RobocopyArguments $Source $Destination $Files $Retry $Wait $SubdirectoriesIncludingEmpty $Restartable $MultiThreaded $ExcludeFiles $LogOutput $AppendLog $AdditionalArgs
 
     if(!$arguments.Contains('/L') -and !$arguments.Contains('/l'))
     {
@@ -191,7 +176,6 @@ function Test-TargetResource
     }
     
     &robocopy $arguments | Out-Null
-    $result = $LASTEXITCODE
 
     # https://support.microsoft.com/en-us/kb/954404
     # ROBOCOPY $LASTEXITCODE is a bitflag:
@@ -201,15 +185,15 @@ function Test-TargetResource
     #  4: mismatched files/directories
     #  8: copy errors and retries exceeded
     # 16: serious error
-    if ($result -ge 1 -and $result -lt 8) 
+    if ($LASTEXITCODE -ge 1 -and $LASTEXITCODE -lt 8) 
     {
         Write-Verbose "Source and destination are out of sync"
-        [system.boolean]$result = $false
+        $result = $false
     }
-    elseif ($result -eq 0)
+    elseif ($LASTEXITCODE -eq 0)
     {
         Write-Verbose "Source and destination are completely synchronized"
-        [system.boolean]$result = $true
+        $result = $true
     }
     else
     {
