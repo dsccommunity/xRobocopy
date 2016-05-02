@@ -114,7 +114,7 @@ Examples
             {
                 Source                = '\\server\share\ReleaseVersion'
                 Destination           = 'C:\inetpub\wwwroot\sitename'
-                Multithread           = $true
+                MultiThreaded         = $true
                 Restartable           = $true
                 PsDscRunAsCredential  = $Credential
             }

@@ -11,11 +11,11 @@ configuration DeployContent
     {
         xRobocopy Content
         {
-            Source                = '\\server\share\ReleaseVersion'
-            Destination           = 'C:\inetpub\wwwroot\sitename'
-            Multithread           = $true
-            Restartable           = $true
-            PSRunAsCredential     = $Credential
+            Source               = '\\server\share\ReleaseVersion'
+            Destination          = 'C:\inetpub\wwwroot\sitename'
+            MultiThreaded        = $true
+            Restartable          = $true
+            PsDscRunAsCredential = $Credential
         }
     }
 }
