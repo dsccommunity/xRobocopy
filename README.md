@@ -48,7 +48,8 @@ Details
 - **ExcludeFiles**: Exclude Files matching given names/paths/wildcards.
 - **LogOutput**: Output status to LOG file.
 - **AppendLog**: Determine whether to overwrite log file or append.
-- **AdditionalArgs**: Robocopy has MANY configuration options.  Too many to present them all as DSC parameters effectively. Use this option to set additional parameters.  The string will be appended to the arguements list.  For a list of options run Robocopy /??? in a shell window.
+- **AdditionalArgs**: Robocopy has MANY configuration options. Too many to present them all as DSC parameters effectively. Use this option to set additional parameters. Each parameter should be a separate array member. This array will be combined with main argument array. For a list of options run Robocopy /??? in a shell window.
+- **Ensure**: (Readonly). Will indicate whether Destination is in sync with Source.
 
 Renaming Requirements
 ---------------------
@@ -74,6 +75,12 @@ We reserve resource and module names without prefixes ("x" or "c") for future us
 
 ### Unreleased
 
+* Improved Test-TargetResource method to run robocopy with the same parameters as in Set-TargetResource
+* Bug fix in Test-TargetResource when evaluating return code from robocopy
+* Updated example to use correct PsDscRunAsCredential parameter
+* **Breaking Change:** Changed AditionalArgs parameter to Array of String
+* Added additional examples with different copy options.
+
 ### 1.2.0.0
 
 * Improvements in error handling
@@ -85,7 +92,7 @@ We reserve resource and module names without prefixes ("x" or "c") for future us
 ### 1.0.0.0
 
 * Initial public release of xRobocopy module with following resources:
-	* xRobocopy
+    * xRobocopy
 
 Examples
 --------
@@ -107,9 +114,9 @@ Examples
             {
                 Source                = '\\server\share\ReleaseVersion'
                 Destination           = 'C:\inetpub\wwwroot\sitename'
-                Multithread           = $true
+                MultiThreaded         = $true
                 Restartable           = $true
-                PSRunAsCredential     = $Credential
+                PsDscRunAsCredential  = $Credential
             }
         }
     }
