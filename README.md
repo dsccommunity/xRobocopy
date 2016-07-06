@@ -77,6 +77,7 @@ We reserve resource and module names without prefixes ("x" or "c") for future us
 ## Versions
 
 ### Unreleased
+* Converted appveyor.yml to install Pester from PSGallery instead of from Chocolatey.
 
 ### 2.0.0.0
 
