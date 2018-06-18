@@ -1,6 +1,6 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/gooo7e8b374v45j6/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/xrobocopy/branch/master)  
+[![Build status](https://ci.appveyor.com/api/projects/status/gooo7e8b374v45j6/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/xrobocopy/branch/master)
 
-# xRobocopy 
+# xRobocopy
 
 The **xRobocopy** module is a part of the Windows PowerShell Desired State Configuration (DSC) Resource Kit, which is a collection of DSC Resources. This module is used to facilitate large file copies with complex requirements such as multithreading, restarts, and exclusions when recursing content., with simple declarative language.
 
@@ -69,7 +69,7 @@ choice
  -    MOF class name (ex: MSFT\_xResource becomes Contoso\_cResource)
  -    Filename for the <resource\>.schema.mof (ex: MSFT\_xResource.schema.mof becomes Contoso\_cResource.schema.mof)
 
-2. Update module and metadata information in the module manifest  
+2. Update module and metadata information in the module manifest
 3. Update any configuration that use these resources
 
 We reserve resource and module names without prefixes ("x" or "c") for future use (e.g. "MSFT_Resource"). If the next version of Windows Server ships with a "WindowsEventForwarding" resource, we don't want to break any configurations that use any community modifications. Please keep a prefix such as "c" on all community modifications.
@@ -77,7 +77,11 @@ We reserve resource and module names without prefixes ("x" or "c") for future us
 ## Versions
 
 ### Unreleased
-* Converted appveyor.yml to install Pester from PSGallery instead of from Chocolatey.
+
+* Added the default appveyor.yml.
+* Activated the GitHub App Stale on the GitHub repository.
+* Fixed new line in example xRobocopy.NetworkAndCredentials.ps1 that failed tests.
+* Added .gitignore file.
 
 ### 2.0.0.0
 
@@ -108,9 +112,9 @@ Examples
     configuration DeployContent
     {
         param (
-            [Parameter(Mandatory=$true)] 
-            [ValidateNotNullorEmpty()] 
-            [PsCredential] $Credential 
+            [Parameter(Mandatory=$true)]
+            [ValidateNotNullorEmpty()]
+            [PsCredential] $Credential
             )
 
         Import-DscResource -ModuleName xRobocopy

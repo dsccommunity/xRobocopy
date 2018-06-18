@@ -1,9 +1,9 @@
 configuration DeployContent
 {
     param (
-        [Parameter(Mandatory=$true)] 
-        [ValidateNotNullorEmpty()] 
-        [PsCredential] $Credential 
+        [Parameter(Mandatory=$true)]
+        [ValidateNotNullorEmpty()]
+        [PsCredential] $Credential
         )
 
     Import-DscResource -ModuleName xRobocopy
