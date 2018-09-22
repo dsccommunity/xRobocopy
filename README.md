@@ -78,10 +78,12 @@ We reserve resource and module names without prefixes ("x" or "c") for future us
 
 ### Unreleased
 
-* Added the default appveyor.yml.
+* Update appveyor.yml to use the default template.
 * Activated the GitHub App Stale on the GitHub repository.
 * Fixed new line in example xRobocopy.NetworkAndCredentials.ps1 that failed tests.
 * Added .gitignore file.
+* Added default template files .codecov.yml, .gitattributes, and .gitignore, and
+  .vscode folder.
 
 ### 2.0.0.0
 
